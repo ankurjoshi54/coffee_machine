@@ -1,8 +1,16 @@
+#!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'coffee_machine/version'
+$LOAD_PATH.unshift(File.dirname(__FILE__))
 
-module CoffeeMachine
-  class Error < StandardError; end
-  # Your code goes here...
+require 'coffee_machine/builder/machine'
+
+if ARGV[0]
+  coffee_machine = CoffeeMachine::Builder::Machine.call(ARGV[0])
+  output = coffee_machine.run
+  until output.empty?
+    STDOUT.puts output.pop
+  end
+else
+  STDOUT.puts 'Please provide the input file'
 end
