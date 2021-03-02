@@ -5,6 +5,9 @@ require 'coffee_machine/error'
 
 module CoffeeMachine
   module Dispenser
+    # Dispenser::Beverage is used to encapsulate the logic of preparing/dispensing
+    # a beverage.
+    #
     # As we are obtaining lock on the ingredient, dead-lock may occur.
     # To prevent it when the lock is obtained on the ingredients then we need
     # to make sure that we don't get circular dependency.

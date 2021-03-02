@@ -3,6 +3,7 @@
 require 'coffee_machine/error'
 
 module CoffeeMachine
+  # Mutex (locks) are used in ingredients to enabled thread-safe operations.
   class Ingredient
     # @param {String} name
     # @param {Numeric} quantity

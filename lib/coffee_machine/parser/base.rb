@@ -5,6 +5,10 @@ require 'coffee_machine/util'
 
 module CoffeeMachine
   module Parser
+    # Parsers are used to read the file_data and parse the result.
+    # Currently only JSON parser is implement. In the future, we can crate
+    # XML, YAML etc. parser for different input format. All parsers will
+    # inherit this base class.
     class Base
       # @param {String} file_name
       def self.call(file_name)

@@ -9,6 +9,10 @@ require 'coffee_machine/validator/base'
 
 module CoffeeMachine
   module Builder
+    # Builder classes are used to build complex objects which require a lof
+    # of operations.
+    # Builder::Machine class is used to build Machine class object from
+    # parsed data and return it.
     class Machine
       # @param {String} file_name
       # @return {CoffeeMachine::Machine}

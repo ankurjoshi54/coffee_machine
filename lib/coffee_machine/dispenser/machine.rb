@@ -2,8 +2,10 @@
 
 module CoffeeMachine
   module Dispenser
-    # To serve N (number of outlets) beverages in parallel we are gonna use Threads.
+    # Dispenser::Machine is used to encapsulate logic of preparing/dispensing
+    # multiple beverages from machine.
     #
+    # To serve N (number of outlets) beverages in parallel we are gonna use Threads.
     # A thread-safe Queue implementation will be used to keep track of beverages
     # we want to prepare.
     # We will create N (number of outlets) threads which will pick the beverage
