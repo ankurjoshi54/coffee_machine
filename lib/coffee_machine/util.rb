@@ -10,7 +10,7 @@ module CoffeeMachine
     # @raise {KeyNotPresent}
     def self.fetch_with_error(hash, key)
       hash.fetch(key) do |key|
-        raise KeyNotPresent.new(hash, key)
+        raise KeyError.new("Key not found: #{key}")
       end
     end
   end

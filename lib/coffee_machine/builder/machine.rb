@@ -5,7 +5,7 @@ require 'coffee_machine/constant'
 require 'coffee_machine/ingredient'
 require 'coffee_machine/machine'
 require 'coffee_machine/parser/json'
-require 'coffee_machine/validator/base'
+require 'coffee_machine/validator/input_data'
 
 module CoffeeMachine
   module Builder
@@ -46,7 +46,7 @@ module CoffeeMachine
 
         # @param {Hash} data - Parsed file data
         def validate_data(data)
-          Validator::Base.call(data)
+          Validator::InputData.call(data)
         end
 
         # @param {Hash} data - Parsed file data

@@ -3,24 +3,6 @@
 module CoffeeMachine
   class Error < StandardError; end
 
-  class KeyNotPresent < Error
-    # @param {Hash} hash
-    # @param {String} key
-    def initialize(hash, key)
-      message = "Key `#{key}` is not present on hash #{hash}"
-      super(message)
-    end
-  end
-
-  class InvalidType < Error
-    # @param {String} value
-    # @param {Class} type
-    def initialize(value, type)
-      message = "`#{value}` is not of type `#{type}`"
-      super(message)
-    end
-  end
-
   class MethodNotImplemented < Error
     # @param {String} method_name
     # @param {String} class_name

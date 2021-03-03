@@ -5,6 +5,7 @@ require 'coffee_machine/error'
 module CoffeeMachine
   # Mutex (locks) are used in ingredients to enabled thread-safe operations.
   class Ingredient
+    # TODO: Add refill functionality and low-ingredients indicator
     # @param {String} name
     # @param {Numeric} quantity
     def initialize(name, quantity)
