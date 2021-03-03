@@ -52,7 +52,7 @@ module CoffeeMachine
         # @param {Hash} data - Parsed file data
         def set_outlets(data)
           outlets_data = machine_data(data)[Constant::INPUT_KEYS[:OUTLETS][:KEY]]
-          @machine.set_outlets(outlets_data[Constant::INPUT_KEYS[:OUTLETS][:COUNT]])
+          @machine.set_outlets!(outlets_data[Constant::INPUT_KEYS[:OUTLETS][:COUNT]])
         end
 
         # @param {Hash} data - Parsed file data
@@ -61,7 +61,7 @@ module CoffeeMachine
 
           ingredients_data.each do |name, quantity|
             ingredient_obj = Ingredient.new(name, quantity)
-            @machine.add_ingredients(name, ingredient_obj)
+            @machine.add_ingredients!(ingredient_obj)
           end
         end
 
@@ -71,7 +71,7 @@ module CoffeeMachine
 
           beverages_data.each do |name, ingredients|
             beverage_obj = Beverage.new(name, ingredients)
-            @machine.add_beverages(name, beverage_obj)
+            @machine.add_beverages!(beverage_obj)
           end
         end
 

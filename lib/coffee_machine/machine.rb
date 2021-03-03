@@ -11,29 +11,40 @@ module CoffeeMachine
     end
 
     # @param {Numeric} count
-    def set_outlets(count)
+    def set_outlets!(count)
       @outlets = count
     end
 
-    # @param {String} name - Name of the ingredient
     # @param {Ingredient} ingredient - Ingredient's object
-    def add_ingredients(name, ingredient)
-      return if @ingredients[name]
+    def add_ingredients!(ingredient)
+      return if @ingredients[ingredient.name]
 
-      @ingredients[name] = ingredient
+      @ingredients[ingredient.name] = ingredient
     end
 
-    # @param {String} name - Name of the beverage
     # @param {Beverage} beverage - Beverage's object
-    def add_beverages(name, beverage)
-      return if @beverages[name]
+    def add_beverages!(beverage)
+      return if @beverages[beverage.name]
 
-      @beverages[name] = beverage
+      @beverages[beverage.name] = beverage
     end
 
     # @return {Queue<String>} - Queue containing output for all beverages
     def run
       Dispenser::Machine.call(@outlets, @beverages, @ingredients)
+    end
+
+    # @return {Array<Ingredient>} - List of ingredients that are low on quantity
+    def low_quantity_ingredients
+      @ingredients.filter_map { |ingredient| ingredient if ingredient.low_quantity? }
+    end
+
+    def refill_low_quantity_ingredients!
+      low_quantity_ingredients.each do |ingredient|
+        ingredient.with_lock do
+          ingredient.refill!
+        end
+      end
     end
   end
 end

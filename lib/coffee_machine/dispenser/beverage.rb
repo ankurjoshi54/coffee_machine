@@ -52,7 +52,6 @@ module CoffeeMachine
       end
 
       private
-
         # Prepare beverage in the thread safe manner by first obtaining lock on
         # the required ingredients and then performing the action.
         def thread_safe_beverage_dispense

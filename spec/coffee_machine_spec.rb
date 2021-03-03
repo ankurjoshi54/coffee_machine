@@ -5,8 +5,10 @@ require 'coffee_machine/constant'
 RSpec.describe 'CoffeeMachine spec' do
   EXECUTABLE_PATH = 'lib/coffee_machine.rb'
   VALID_INPUT_PATH = 'spec/assets/valid_input.json'
-  VALID_INPUT_WITHOUT_INGREDIENT = 'spec/assets/valid_input_without_ingredients.json'
   INVALID_INPUT_PATH = 'spec/assets/invalid_input.json'
+  INPUT_WITH_MISSING_INGREDIENTS = 'spec/assets/input_with_missing_ingredients.json'
+  INPUT_WITH_UNSUFFICIENT_INGREDIENTS = 'spec/assets/input_with_unsufficient_ingredients.json'
+  INPUT_WITH_SUFFICIENT_INGREDIENTS = 'spec/assets/input_with_sufficient_ingredients.json'
 
   describe 'with valid input file' do
     it 'perform CoffeeMachine logic and print correct output to stdout' do
@@ -17,17 +19,37 @@ RSpec.describe 'CoffeeMachine spec' do
         CoffeeMachine::Constant::OUTPUT_MESSAGE[:NOT_SUFFICIENT] % %w(black_tea hot_water)
       ]
 
-      expect { system %(#{EXECUTABLE_PATH} #{VALID_INPUT_PATH}) }.to \
+      expect { system %(ruby #{EXECUTABLE_PATH} #{VALID_INPUT_PATH}) }.to \
         output(include(*expected_output)).to_stdout_from_any_process
     end
 
-    it 'without ingredients, all beverages will not be available' do
+    it 'with missing ingredient, beverages will not be prepared' do
       expected_output = [
-        CoffeeMachine::Constant::OUTPUT_MESSAGE[:NOT_AVAILABLE] % %w(hot_tea ginger_syrup),
-        CoffeeMachine::Constant::OUTPUT_MESSAGE[:NOT_AVAILABLE] % %w(hot_coffee ginger_syrup)
+        CoffeeMachine::Constant::OUTPUT_MESSAGE[:NOT_AVAILABLE] % %w(hot_tea hot_water),
+        CoffeeMachine::Constant::OUTPUT_MESSAGE[:NOT_AVAILABLE] % %w(hot_coffee hot_milk)
       ]
 
-      expect { system %(#{EXECUTABLE_PATH} #{VALID_INPUT_WITHOUT_INGREDIENT}) }.to \
+      expect { system %(ruby #{EXECUTABLE_PATH} #{INPUT_WITH_MISSING_INGREDIENTS}) }.to \
+        output(include(*expected_output)).to_stdout_from_any_process
+    end
+
+    it 'with unsufficient ingredient, beverages will not be prepared' do
+      expected_output = [
+        CoffeeMachine::Constant::OUTPUT_MESSAGE[:NOT_SUFFICIENT] % %w(hot_tea hot_water),
+        CoffeeMachine::Constant::OUTPUT_MESSAGE[:NOT_SUFFICIENT] % %w(hot_coffee hot_milk)
+      ]
+
+      expect { system %(ruby #{EXECUTABLE_PATH} #{INPUT_WITH_UNSUFFICIENT_INGREDIENTS}) }.to \
+        output(include(*expected_output)).to_stdout_from_any_process
+    end
+
+    it 'with sufficient ingredient, beverages will be prepared' do
+      expected_output = [
+        CoffeeMachine::Constant::OUTPUT_MESSAGE[:PREPARED] % 'hot_tea',
+        CoffeeMachine::Constant::OUTPUT_MESSAGE[:PREPARED] % 'hot_coffee'
+      ]
+
+      expect { system %(ruby #{EXECUTABLE_PATH} #{INPUT_WITH_SUFFICIENT_INGREDIENTS}) }.to \
         output(include(*expected_output)).to_stdout_from_any_process
     end
   end
@@ -42,13 +64,13 @@ RSpec.describe 'CoffeeMachine spec' do
         'beverages.black_tea is not of type Hash'
       ]
 
-      expect { system %(#{EXECUTABLE_PATH} #{INVALID_INPUT_PATH}) }.to \
+      expect { system %(ruby #{EXECUTABLE_PATH} #{INVALID_INPUT_PATH}) }.to \
         output(include(*expected_output)).to_stdout_from_any_process
     end
   end
 
   it 'output required message to stdout if the file is not provided' do
-    expect { system %(#{EXECUTABLE_PATH}) }.to \
+    expect { system %(ruby #{EXECUTABLE_PATH}) }.to \
       output(include('Please provide the input file.')).to_stdout_from_any_process
   end
 end

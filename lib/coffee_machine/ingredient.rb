@@ -5,7 +5,10 @@ require 'coffee_machine/error'
 module CoffeeMachine
   # Mutex (locks) are used in ingredients to enabled thread-safe operations.
   class Ingredient
-    # TODO: Add refill functionality and low-ingredients indicator
+    LOW_QUANTITY_THRESHOLD_PERCENTAGE = 20
+
+    attr_reader :name
+
     # @param {String} name
     # @param {Numeric} quantity
     def initialize(name, quantity)
@@ -33,8 +36,10 @@ module CoffeeMachine
     # @raise {LockRequired}
     # @raise {Error}
     def consume!(quantity)
-      return LockRequired.new(__method__, self.class) unless @mutex.owned?
-      return Error.new("Ingredient quantity is not sufficient.") if @remaining_quantity < quantity
+      validate_lock
+      if @remaining_quantity < quantity
+        raise Error.new("Ingredient quantity is not sufficient.")
+      end
 
       @remaining_quantity -= quantity
     end
@@ -44,5 +49,38 @@ module CoffeeMachine
     def sufficient?(quantity)
       @remaining_quantity >= quantity
     end
+
+    # Refill ingredients
+    #
+    # @raise {LockRequired}
+    def refill!
+      validate_lock
+
+      @remaining_quantity = @max_quantity
+    end
+
+    # Return true if the remaining_quantity is lower than `LOW_QUANTITY_THRESHOLD_PERCENTAGE`
+    # percent of max_quantity.
+    #
+    # @return {Boolean}
+    def low_quantity?
+      @remaining_quantity < (@max_quantity / LOW_QUANTITY_THRESHOLD_PERCENTAGE)
+    end
+
+    # Execute block passed on it after obtaining lock on the ingredient.
+    def with_lock
+      lock
+      begin
+        yield if block_given?
+      ensure
+        unlock
+      end
+    end
+
+    private
+      # Raise error if the lock is not obtained by current thread
+      def validate_lock
+        raise LockRequired.new(__method__, self.class) unless @mutex.owned?
+      end
   end
 end

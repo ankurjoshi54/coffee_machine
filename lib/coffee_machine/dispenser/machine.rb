@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'coffee_machine/util'
+
 module CoffeeMachine
   module Dispenser
     # Dispenser::Machine is used to encapsulate logic of preparing/dispensing
@@ -41,27 +43,18 @@ module CoffeeMachine
 
       private
         def add_work_to_queue
-          @beverages.each do |_, beverage|
-            @work_queue.push(beverage)
+          @beverages.each do |_, beverage_obj|
+            action_proc = lambda do |beverage, ingredients|
+              beverage.dispense(ingredients)
+            end
+            action_parameters = [beverage_obj, @ingredients]
+
+            @work_queue.push([action_proc, action_parameters])
           end
         end
 
         def execute_work_in_queue
-          threads = []
-          @outlets.times do
-            threads << Thread.new do
-              loop do
-                begin
-                  beverage = @work_queue.pop(true)
-                rescue ThreadError
-                  Thread::exit
-                end
-                @result.push(beverage.dispense(@ingredients))
-              end
-            end
-          end
-
-          threads.each(&:join)
+          Util.execute_work_with_threads(@outlets, @work_queue, @result)
         end
     end
   end
